@@ -1,85 +1,46 @@
-# CodeAlpha_Handwritten_Character-Recognition
 
+# 📝 EMNIST Handwritten Character Recognition
 
-### *End-to-End CNN with Interactive Gradio Interface*
+### *A Deep Learning Project with Statistical Validation Interface*
 
-This repository contains a full-stack Machine Learning pipeline that classifies handwritten digits and letters. It solves the common "orientation" problem in the EMNIST dataset and provides a web-based UI for real-time testing.
+This project implements a Convolutional Neural Network (CNN) to classify 47 different categories of handwritten characters using the EMNIST (Extended MNIST) Balanced dataset. It features a Gradio-based analysis tool to verify model performance across thousands of test samples.
 
----
+## 🚀 Project Overview
 
-## 🏗️ Technical Architecture
+* **Dataset:** EMNIST Balanced (131,600 images).
+* **Classes:** 47 (Digits 0-9, Uppercase A-Z, and select lowercase letters).
+* **Framework:** TensorFlow / Keras.
+* **Accuracy Logic:** Statistical batch testing (100 samples per class).
 
-The system is built on a custom Convolutional Neural Network (CNN) designed to balance speed and accuracy.
+## 🛠️ Data Pipeline & Preprocessing
 
-### 1. The Model "Brain"
+To ensure the model learns effectively, the raw EMNIST data underwent several critical transformations:
 
-* **Convolutional Layers:** Two layers using  filters to detect edges, curves, and loops.
-* **Pooling:** Max-pooling layers to make the model invariant to the exact position of the character.
-* **Regularization:** Dropout at 50% to prevent the model from overfitting on specific handwriting styles.
-* **Output:** A 47-way Softmax layer providing probability distributions for all supported characters.
+1. **Orientation Correction:** EMNIST images are natively stored transposed and flipped. We applied `np.rot90(np.fliplr(img))` to restore them to an upright, human-readable position.
+2. **Normalization:** Pixel values were scaled from  to a  range to improve training stability and speed.
+3. **One-Hot Encoding:** Labels were converted into categorical vectors to facilitate multi-class classification.
 
----
+## 🧠 Model Architecture
 
-## 📊 Dataset: EMNIST Balanced
+The CNN was designed to extract spatial features from the  grayscale inputs:
 
-We use the `emnist-balanced-train.csv` dataset from Kaggle.
+* **Input Layer:** .
+* **Convolutional Layers:** Two layers with ReLU activation for feature detection.
+* **Pooling:** Max-pooling layers to reduce dimensionality.
+* **Regularization:** Dropout (0.5) to prevent overfitting.
+* **Output:** Dense layer with Softmax activation for 47-class probability distribution.
 
-* **Total Classes:** 47
-* **Contents:** * **0-9**: Digits.
-* **A-Z**: Uppercase letters.
-* **a-r**: Specific lowercase letters (where they differ significantly from uppercase).
+## 📊 Statistical Evaluation Tool
 
+While live drawing interfaces can be affected by stroke thickness and canvas resolution, this project utilizes a **Statistical Accuracy Tester** for objective validation:
 
+* **Batch Analysis:** Instead of a single image, the tool pulls 100 random samples from the test set () for a chosen character.
+* **Real-time Accuracy Reporting:** Calculates the percentage of correct identifications to show exactly where the model is strongest.
+* **Error Identification:** Helps identify "confusion pairs" (e.g., why the model might mistake a handwritten '7' for a '6').
 
-### The "90-Degree" Solution
+## 💻 How to Use
 
-Raw EMNIST data is stored in a transposed format (flipped and rotated). This project includes a preprocessing pipeline that restores characters to their natural upright position:
-
-```python
-# The Transformation Logic
-X = np.rot90(np.fliplr(img))
-
-```
-
----
-
-## 🌐 Gradio Web Interface
-
-The project concludes with a **Gradio** deployment. This creates a local web server where you can draw on a digital canvas.
-
-* **Input:** 28x28 Sketchpad.
-* **Processing:** The sketch is automatically resized, grayscaled, and normalized to match the training data.
-* **Output:** The predicted character and a bar chart showing the model's confidence.
-
----
-
-## 🚀 Step-by-Step Execution Flow
-
-1. **Authentication:** Automated Kaggle login using environment variables.
-2. **Acquisition:** Downloading the 47-class balanced dataset via `opendatasets`.
-3. **Preprocessing:** * Reshaping to .
-* Normalization to  range.
-* Categorical one-hot encoding for 47 classes.
-
-
-4. **Training:** 10 epochs with the Adam optimizer and Categorical Crossentropy loss.
-5. **Evaluation:** Generating a **Confusion Matrix** to identify "look-alike" errors (e.g., 'O' vs '0').
-6. **Deployment:** Launching the Gradio UI.
-
----
-
-## 🛠️ Requirements
-
-* `tensorflow` (Deep Learning)
-* `gradio` (Web UI)
-* `numpy` & `pandas` (Data Math)
-* `matplotlib` & `seaborn` (Visualization)
-* `opendatasets` (Kaggle Integration)
-
----
-
-## 📝 Class Mapping Table
-
-The model indices () are mapped as follows:
-`0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabdefghnqrt`
-
+1. **Environment:** Run the notebook in Google Colab or a local environment with a GPU.
+2. **Training:** Execute the training cells to fit the model on the EMNIST Balanced data.
+3. **Analysis:** Launch the Gradio link at the bottom of the notebook.
+4. **Test:** Select a character from the dropdown and click "Run Accuracy Test" to see the statistical breakdown.
